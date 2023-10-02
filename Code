@@ -1,25 +1,125 @@
 Sub Stocks():
-
-    For Each ws In Worksheets
-
+ 
+ 'Variables creation'
+ 
         Dim Ticker As String
         Dim YearlyChange As Double
         Dim PercentChange As Double
         Dim TotalStock As Double
-        Dim Open1 As Double
-        Dim Close1 As Double
+        Dim Max As Double
+        Dim Min As Double
+        Dim GTV As Double
+        Dim Ticker2 As String
+        Dim Ticker3 As String
+        Dim Ticker4 As String
         Dim i As Double
         Dim j As Double
+    
+    'Printing the names of each row'
 
-        ws.Cells(1, 9).Value = "Ticker"
-        ws.Cells(1, 10).Value = "Yearly Change"
-        ws.Cells(1, 11).Value = "Percent Change"
-        ws.Cells(1, 12).Value = "Total Stock Volume"
-        
-        i = 2
-        
-        
-        LastRow = ws.Cells(Rows.Count, "A").End(xlUp).Row
+        Cells(1, 9).Value = "Ticker"
+        Cells(1, 10).Value = "Yearly Change"
+        Cells(1, 11).Value = "Percent Change"
+        Cells(1, 12).Value = "Total Stock Volume"
+        Cells(1, 16).Value = "Ticker"
+        Cells(1, 17).Value = "Value"
+        Cells(2, 15).Value = "Greatest % Increase"
+        Cells(3, 15).Value = "Greatest % Decrease"
+        Cells(4, 15).Value = "Greatest Total Volume"
+     
+    
+      ' Keep track of the location for each Ticker
+  
+  j = 2
+  
 
+  ' Loop through all rows
+  For i = 2 To Worksheets("A").UsedRange.Rows.Count
+    
+    ' Check if we are still within the same Ticker
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+      
+      ' Set the Ticker
+      Ticker = Cells(i, 1).Value
+      
+      ' Calculate the PercentChange
+      PercentChange = (Cells(i, 6).Value - Cells(i, 3).Value) / Cells(i, 3).Value
+      
+      ' Calculate the YearlyChange
+      YearlyChange = Cells(i, 6).Value - Cells(i, 3).Value
+      
+       ' Set the color for YearlyChange
+      
+      If Cells(j, 10).Value >= 0 Then
+            
+            Cells(j, 10).Interior.ColorIndex = 4
+        
+        Else
+         
+            Cells(j, 10).Interior.ColorIndex = 3
+            
+        End If
+        
+         ' Calculate the TotalStock
+      TotalStock = TotalStock + Cells(i, 3).Value
+      
 
-End Sub
+      ' Print the Ticker
+      Cells(j, 9).Value = Ticker
+      
+      ' Print the Percent Change and put the correct format
+      Cells(j, 11).Value = PercentChange
+      Cells(j, 11).Value = Format(PercentChange, "Percent")
+       
+       'Print the Yearly Change
+      Cells(j, 10).Value = YearlyChange
+      
+      ' Print the Brand Amount to the Summary Table
+      Cells(j, 12).Value = TotalStock
+      
+      
+      ' Add one to the row where the results are
+      j = j + 1
+      
+      ' Reset the TotalStock Total
+      TotalStock = 0
+    Else
+      ' Add to the TotalStock
+      TotalStock = TotalStock + Cells(i, 7).Value
+    End If
+    
+'Check through all values if the nex one is larger to obtain the Max of Greatest % increase
+   If Cells(i, 11).Value > Max Then
+            Max = Cells(i, 11).Value
+'Obtain the ticker that has the  Max of Greatest % increase
+            Ticker2 = Cells(i, 9).Value
+        End If
+        
+ 'Check through all values if the nex one is smaller to obtain the Max of Greatest % decrease
+
+        If Cells(i, 11).Value < Min Then
+            Min = Cells(i, 11).Value
+'Obtain the ticker that has the Min of Greatest % decrease
+            Ticker3 = Cells(i, 9).Value
+        End If
+        
+'Check through all values if the nex one is larger to obtain the Max of GTV
+        If Cells(i, 12).Value > GTV Then
+            GTV = Cells(i, 12).Value
+'Obtain the ticker that has  the Max of GTV
+            Ticker4 = Cells(i, 9).Value
+        End If
+Next i
+
+ ' Print all of the values obtaind in the desired rows and with the right format
+    Cells(2, 16).Value = Max
+    Cells(2, 16).Value = Format(Max, "Percent")
+    Cells(2, 17).Value = Ticker2
+    Cells(3, 16).Value = Min
+    Cells(3, 16).Value = Format(Min, "Percent")
+    Cells(3, 17).Value = Ticker3
+    Cells(4, 16).Value = GTV
+    Cells(4, 17).Value = Ticker4
+  
+    
+    End Sub
